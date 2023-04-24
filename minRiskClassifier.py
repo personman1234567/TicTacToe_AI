@@ -2,106 +2,95 @@
     # https://machinelearningmastery.com/naive-bayes-classifier-scratch-python/
 
 import csv
+import copy
 from math import exp, pi, sqrt
-
 import pandas as pd
 
-# Split the dataset by class values, returns a dictionary
-def separate_by_class(dataset):
-    separated = dict()
-
-    for i in range(len(dataset)):
-        vector = dataset.iloc[i]
-        class_value = dataset['class'].iloc[i]
-        if (class_value not in separated):
-            separated[class_value] = list()
-        separated[class_value].append(vector)
-    return separated
-
-# Convert string column to float
-def str_column_to_float(dataset, column):
-    for row in dataset:
-        row[column] = float(row[column].strip())
-
-def calculate_probability(x, mean, stdev):
+def calculateProbability(x, mean, stdev):
     exponenet = exp(-((x-mean)**2 / (2 * stdev**2 )))
     return (1 / (sqrt(2 * pi) * stdev)) * exponenet
 
-# Calculate the mean, stdev and count for each column in a dataset
-# def summarize_dataset(dataset):
-
-    # summaries = [(mean(column), stdev(column), len(column)) for column in zip(*dataset)]
-    # del(summaries[-1])
-    # return summaries
-
-def summarize_by_class(dataset):
-    grouped = dataset.groupby(dataset['class'])
-    positiveData = grouped.get_group('positive')
-    negativeData = grouped.get_group('negative')
-    # separated = separate_by_class(dataset)
-    summaries = dict()
-    # for class_value, rows in separated.items():
-    #     summaries[class_value] = summarize_dataset(rows)
-    return summaries
 
 # Calculate the probabilities of predicting each class for a given row
-def calculate_class_probabilities(summaries, row):
-    total_rows = sum([summaries[label][0][2] for label in summaries])
+def calculateClassProbabilities(summaries, row):
+    totalRows = sum([summaries[label][0][2] for label in summaries])
     probabilities = dict()
-    for class_value, class_summaries in summaries.items():
-        probabilities[class_value] = summaries[class_value][0][2]/float(total_rows)
-        for i in range(len(class_summaries)):
-            mean, stdev, count = class_summaries[i]
-            probabilities[class_value] *= calculate_probability(row[i], mean, stdev)
+    for classValue, classSummaries in summaries.items():
+        probabilities[classValue] = summaries[classValue][0][2]/float(totalRows)
+        for i in range(len(classSummaries)):
+            mean, stdev, count = classSummaries[i]
+            probabilities[classValue] *= calculateProbability(row[i], mean, stdev)
     return probabilities
 
-def main():
-	# with open("data.csv", 'r') as file:
-	# 	csvreader = csv.reader(file)
-	# 	for row in csvreader:
-	# 		print(row)
-
-    data = pd.read_csv("dataNums.csv")
-
-    grouped = data.groupby(data['class'])
-    positiveData = grouped.get_group('positive')
-    negativeData = grouped.get_group('negative')
-
-    print(positiveData)
-
-    positiveMeans = positiveData.mean(axis = 0, numeric_only=True)
-    positiveStDevs = positiveData.std(numeric_only=True)
-
-    negativeMeans = negativeData.mean(axis = 0, numeric_only=True)
-    negativeStDevs = negativeData.std(numeric_only=True)
+def getSummaries(posData, negData):
+    positiveMeans = posData.mean(axis = 0, numeric_only=True)
+    positiveStDevs = posData.std(numeric_only=True)
+    negativeMeans = negData.mean(axis = 0, numeric_only=True)
+    negativeStDevs = negData.std(numeric_only=True)
 
     summaries = dict()
-
-    # print("Class: Positive")
-    print(positiveMeans)
-    print(positiveMeans['1'])
-    # print(positiveStDevs)
 
     posSummaries = list()
     negSummaries = list()
     for i in range(1, 10):
-        posSummaries.append((positiveMeans[str(i)], positiveStDevs[str(i)], len(positiveData)))
-        negSummaries.append((negativeMeans[str(i)], negativeStDevs[str(i)], len(negativeData)))
+        posSummaries.append((positiveMeans[str(i)], positiveStDevs[str(i)], len(posData)))
+        negSummaries.append((negativeMeans[str(i)], negativeStDevs[str(i)], len(negData)))
     summaries['positive'] = posSummaries
     summaries['negative'] = negSummaries
 
-    print(summaries['positive'])
-    print(summaries['negative'])
+    return summaries
 
-    probabilities = calculate_class_probabilities(summaries, [1,1,1,1,-1,-1,1,-1,-1])
+# Finds the minimum risk probabilities based on the board state
+def minRiskClassifier(state):
 
-    print(probabilities)
+    data = pd.read_csv("dataNums.csv")
 
-    # print("Class: Negative")
-    # print(negativeMeans)
-    # print(negativeStDevs)
+    # Separate Date by Class
+    grouped = data.groupby(data['class'])
+    positiveData = grouped.get_group('positive')
+    negativeData = grouped.get_group('negative')
 
-    # print(negativeData.std(numeric_only=True)['9'])
+    summaries = getSummaries(positiveData, negativeData)
+
+    probabilities = calculateClassProbabilities(summaries, state)
+
+    return probabilities
 
 
-main()
+# Get all the next possible board states for the given player
+def getNextBoardStates(state, player):
+    states = dict()
+
+    # Loop through current board state
+    for i, val in enumerate(state):
+        tempState = copy.copy(state)
+        # For each 0 in the board, create a new state with the players value in that position
+        if val == 0:
+            tempState[i] = player
+            states[i] = tempState
+
+    return states
+
+# Find the next best move and it's corresponding probability
+def getNextBestMove(state, player):
+    nextStates = getNextBoardStates(state, player)
+
+    highestProbability = (0,0)
+    for key, value in nextStates.items():
+        probabilities = minRiskClassifier(value)
+        if probabilities['positive'] > highestProbability[1]:
+            highestProbability = (key, probabilities['positive'])
+
+    return highestProbability
+
+
+# ************ Testing ******************
+
+# probabilities = minRiskClassifier([1,1,1,1,-1,-1,1,-1,-1])
+# print(probabilities)
+
+# states = getNextBoardStates([0,1,1,1,0,-1,1,-1,0], 1)
+# print(states)
+
+nextMove = getNextBestMove([0,0,0,-1,1,0,0,0,0], 1)
+print(nextMove)
