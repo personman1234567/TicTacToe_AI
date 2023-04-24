@@ -1,3 +1,6 @@
+# Helpful Links
+    # https://machinelearningmastery.com/naive-bayes-classifier-scratch-python/
+
 import csv
 from math import exp, pi, sqrt
 
