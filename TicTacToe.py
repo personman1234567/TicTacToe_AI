@@ -1,3 +1,5 @@
+from gui import TicTacToeGUI
+
 def print_board(board):
     print("\n\n----------------------------------------------\n\n")
     print("   1   2   3")
@@ -13,10 +15,16 @@ def print_board_initial(board):
         if i != 2:
             print('  ---+---+---')
 
-def make_move(board, player, x, y):
+def make_move(board, player, x, y, gui):
     if board[x][y] != ' ':
         return False
     board[x][y] = player
+    gui.setPlayer(player)
+    gui.clicked(x, y, player)
+    if player == "X":
+        gui.setLabelOne("Turn: O")
+    else:
+        gui.setLabelOne("Turn: X")
     return True
 
 def has_winner(board):
@@ -39,7 +47,18 @@ def has_winner(board):
     # If no winner yet, then main loop continues
     return None
 
+def has_empty(board):
+    for row in board:
+        for col in range(3):
+            if row[col] == "":
+                return True
+            
+    return False
+
 def main():
+    gui = TicTacToeGUI()
+    # gui.run()
+
     board = [
         [' ', ' ', ' '],
         [' ', ' ', ' '],
@@ -80,7 +99,7 @@ def main():
             else:
                 print("\nInvalid Input: Select a valid row")
 
-        if not make_move(board, player, x, y):
+        if not make_move(board, player, x, y, gui):
             print('Invalid move!')
             continue
 
@@ -97,4 +116,4 @@ def main():
             print("\nIt's a Draw!\n")
             loop = False
 
-main()
+# main()

@@ -67,7 +67,7 @@ def getNextBoardStates(state, player):
         # For each 0 in the board, create a new state with the players value in that position
         if val == 0:
             tempState[i] = player
-            states[i] = tempState
+            states[i+1] = tempState
 
     return states
 
@@ -92,5 +92,5 @@ def getNextBestMove(state, player):
 # states = getNextBoardStates([0,1,1,1,0,-1,1,-1,0], 1)
 # print(states)
 
-nextMove = getNextBestMove([0,0,0,-1,1,0,0,0,0], 1)
-print(nextMove)
+# nextMove = getNextBestMove([0,0,0,-1,1,0,0,0,0], 1)
+# print(nextMove)
