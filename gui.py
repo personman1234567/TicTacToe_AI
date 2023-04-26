@@ -1,6 +1,7 @@
 import tkinter as tk
 from TicTacToe import *
 from minRiskClassifier import *
+import tkinter.font as tkFont
 
 class TicTacToeGUI:
     def __init__(self):
@@ -12,6 +13,7 @@ class TicTacToeGUI:
             [' ', ' ', ' '],
             [' ', ' ', ' ']
         ]
+        self.round = 1
 
         self.buttons = [[" " for _ in range(3)] for _ in range(3)]
 
@@ -26,10 +28,29 @@ class TicTacToeGUI:
         self.nextTurnLabel = tk.Label(self.root, text="Next Turn:")
         self.nextTurnLabel.grid(row=0, column=3)
 
-        self.xRecVal = tk.Label(self.root, text="-")
+        nextMove = getNextBestMove([0,0,0,0,0,0,0,0,0], 1)
+        move = nextMove[0]
+
+        # Label and Value for Minimum Risk Classifier for X
+        self.xRecVal = tk.Label(self.root, text=str(move))
         self.xRecVal.grid(row=1, column=4)
-        self.xRecLabel = tk.Label(self.root, text="Recommended X:")
+        self.xRecLabel = tk.Label(self.root, text="MinRisk Classifier for X:")
         self.xRecLabel.grid(row=1, column=3)
+
+        # Label and Value for Game Status
+        self.statusLabel = tk.Label(self.root, text="Round")
+        self.statusLabel.grid(row=2, column=3)
+        self.statusVal = tk.Label(self.root, text=self.round)
+        self.statusVal.grid(row=2, column=4)
+
+
+        self.mapLabel = tk.Label(self.root, text="Map: ")
+        self.mapLabel.grid(row=3, column=0)
+        self.mapVal = tk.Label(self.root, text="1|2|3\n4|5|6\n7|8|9")
+        f = tkFont.Font(self.mapVal, self.mapVal.cget("font"))
+        f.configure(underline = True)
+        self.mapVal.configure(font=f)
+        self.mapVal.grid(row=3, column=1)
 
 
     def setPlayer(self, player):
@@ -48,10 +69,12 @@ class TicTacToeGUI:
             button["text"] = "X"
             self.setTurnLabel("O")
             self.setPlayer("O")
+            self.updateRoundDisplay()
         elif self.player == "O":
             button["text"] = "O"
             self.setTurnLabel("X")
             self.setPlayer("X")
+            self.updateRoundDisplay()
         else:
             button["text"] = ""
             self.setPlayer(" ")
@@ -60,18 +83,37 @@ class TicTacToeGUI:
 
         winner = self.has_winner()
         if winner != None:
-            self.setTurnLabel("Winner: " + winner)
+            self.updateWinnerDisplay(winner)
+            # self.setTurnLabel("Winner: " + winner)
 
         # Check if the board is full
         empty = self.has_empty()
         if empty == False:
-            self.setTurnLabel("Draw!")
+            self.setStatusLabel("Draw!")
+            self.setStatusVal("")
 
     def setTurnLabel(self, content):
         self.nextTurnVal["text"] = content
 
     def setXRecLabel(self, content):
         self.xRecVal["text"] = content
+
+    def setStatusLabel(self, content):
+        self.statusLabel["text"] = content
+
+    def setStatusVal(self, content):
+        self.statusVal["text"] = content
+
+    def setRound(self, round):
+        self.round = round
+
+    def updateRoundDisplay(self):
+        self.setRound(self.round + 1)
+        self.setStatusVal(self.round)
+
+    def updateWinnerDisplay(self, winner):
+        self.setStatusLabel("Winner: ")
+        self.setStatusVal(str(winner))
 
     def has_winner(self):
         # check rows for winner
@@ -132,61 +174,3 @@ class TicTacToeGUI:
 if __name__ == "__main__":
     gui = TicTacToeGUI()
     gui.run()
-    # board = [
-    #     [' ', ' ', ' '],
-    #     [' ', ' ', ' '],
-    #     [' ', ' ', ' ']
-    # ]
-
-    # player = 'X'
-    # print_board_initial(board)
-    # gameStarted = False
-    # placementCount = 0
-    # loop = True
-
-    # while loop == True:
-        # if gameStarted:
-        #     print_board(board)
-        #     print("\n")
-        #     print("Player", player+"'s Turn")
-
-        # if not gameStarted:
-        #     gameStarted = True
-        #     print("\nPlayer X's Turn")
-
-        
-
-        # columnInput = False
-        # while not columnInput:  
-        #     y = int(input('\nEnter Column Number: '))
-        #     if(y == 1 or y == 2 or y == 3):
-        #         y = y - 1
-        #         columnInput = True
-        #     else:
-        #         print("\nInvalid Input: Select a valid column")
-
-        # rowInput = False
-        # while not rowInput:
-        #     x = int(input('Enter Row Number: '))
-        #     if(x == 1 or x == 2 or x == 3):
-        #         x = x - 1
-        #         rowInput = True
-        #     else:
-        #         print("\nInvalid Input: Select a valid row")
-
-        # if not make_move(board, player, x, y, gui):
-        #     print('Invalid move!')
-        #     continue
-
-        # winner = has_winner(board)
-
-        # if winner:
-        #     print_board(board)
-        #     print("\n")
-        #     print(winner, 'is the winner!!!\n')
-        #     break
-        # player = 'X' if player == 'O' else 'O'  #Switches the player symbol if move was valid, and there is no winner
-        # placementCount += 1
-        # if placementCount == 9:
-        #     print("\nIt's a Draw!\n")
-        #     loop = False
