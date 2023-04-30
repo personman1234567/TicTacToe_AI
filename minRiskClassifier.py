@@ -72,7 +72,7 @@ def getNextBoardStates(state, player):
     return states
 
 # Find the next best move and it's corresponding probability
-def getNextBestMove(state, player):
+def getNextBestMoveMinRisk(state, player):
     nextStates = getNextBoardStates(state, player)
 
     highestProbability = (0,0)

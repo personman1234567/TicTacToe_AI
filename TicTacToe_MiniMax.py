@@ -73,7 +73,7 @@ def minimax(board, depth, is_maximizing):
                     best_score = min(best_score, score)
         return best_score
 
-def get_best_move(board):
+def get_best_move_minimax(board):
     best_score = -float('inf')
     best_move = None
     for i in range(3):
@@ -111,7 +111,7 @@ def main():
             print("\nPlayer X's Turn")
 
         if player == 'X':               #If its x players turn, find best move first, then display best move. Then take the inputs
-            x, y = get_best_move(board)
+            x, y = get_best_move_minimax(board)
             print("The most optimal move for X is: (Column:{}, Row:{})".format(y+1, x+1))
 
         columnInput = False
@@ -149,4 +149,4 @@ def main():
             print("\nIt's a Draw!\n")
             loop = False
 
-main()
+# main()

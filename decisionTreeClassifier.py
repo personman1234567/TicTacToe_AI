@@ -21,6 +21,6 @@ accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy:", accuracy)
 
 # Make predictions on new data
-new_board = [[1, 0, 0, 0, 0, 0, 0, 0, 0]]
+new_board = [[-1, 1, 0, 1, 0, 0, 0, 0, -1]]
 prediction = clf.predict(new_board)
 print("Prediction:", prediction)

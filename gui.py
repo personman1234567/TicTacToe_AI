@@ -1,5 +1,6 @@
 import tkinter as tk
 from TicTacToe import *
+from TicTacToe_MiniMax import *
 from minRiskClassifier import *
 import tkinter.font as tkFont
 
@@ -28,7 +29,7 @@ class TicTacToeGUI:
         self.nextTurnLabel = tk.Label(self.root, text="Next Turn:")
         self.nextTurnLabel.grid(row=0, column=3)
 
-        nextMove = getNextBestMove([0,0,0,0,0,0,0,0,0], 1)
+        nextMove = getNextBestMoveMinRisk([0,0,0,0,0,0,0,0,0], 1)
         move = nextMove[0]
 
         # Label and Value for Minimum Risk Classifier for X
@@ -39,11 +40,11 @@ class TicTacToeGUI:
 
         # Label and Value for Game Status
         self.statusLabel = tk.Label(self.root, text="Round")
-        self.statusLabel.grid(row=2, column=3)
+        self.statusLabel.grid(row=3, column=3)
         self.statusVal = tk.Label(self.root, text=self.round)
-        self.statusVal.grid(row=2, column=4)
+        self.statusVal.grid(row=3, column=4)
 
-
+        # Label and Value for board map
         self.mapLabel = tk.Label(self.root, text="Map: ")
         self.mapLabel.grid(row=3, column=0)
         self.mapVal = tk.Label(self.root, text="1|2|3\n4|5|6\n7|8|9")
@@ -51,6 +52,14 @@ class TicTacToeGUI:
         f.configure(underline = True)
         self.mapVal.configure(font=f)
         self.mapVal.grid(row=3, column=1)
+
+        nextMinimaxMove = get_best_move_minimax(self.board)
+
+        # Label and Value for Minimax Recommendation
+        self.minimaxLabel = tk.Label(self.root, text="Minimax Recommendation for X:")
+        self.minimaxLabel.grid(row=2, column=3)
+        self.minimaxVal = tk.Label(self.root, text=str(self.colRowToVectorVal(nextMinimaxMove[1], nextMinimaxMove[0])))
+        self.minimaxVal.grid(row=2, column=4)
 
 
     def setPlayer(self, player):
@@ -79,7 +88,7 @@ class TicTacToeGUI:
             button["text"] = ""
             self.setPlayer(" ")
 
-        self.updateXRec()
+        self.updateRecs()
 
         winner = self.has_winner()
         if winner != None:
@@ -106,6 +115,9 @@ class TicTacToeGUI:
 
     def setRound(self, round):
         self.round = round
+
+    def setMinimaxVal(self, content):
+        self.minimaxVal["text"] = content
 
     def updateRoundDisplay(self):
         self.setRound(self.round + 1)
@@ -152,7 +164,7 @@ class TicTacToeGUI:
                     transformedBoard.append(0)
         return transformedBoard
     
-    def updateXRec(self):
+    def updateRecs(self):
         board = self.transformBoard()
         if self.player == "X":
             player = 1
@@ -162,10 +174,18 @@ class TicTacToeGUI:
             player = 0
 
         if self.player == "X":
-            nextMove = getNextBestMove(board, player)
+            nextMove = getNextBestMoveMinRisk(board, player)
+            nextMoveMinimax = get_best_move_minimax(self.board)
 
             move = nextMove[0]
             self.setXRecLabel(str(move))
+
+            moveMinimax = self.colRowToVectorVal(nextMoveMinimax[1], nextMoveMinimax[0])
+            self.setMinimaxVal(str(moveMinimax))
+    
+    def colRowToVectorVal(self, col, row):
+        vectorVal = (row*3) + (col+1)
+        return vectorVal
 
 
     def run(self):
