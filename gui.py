@@ -40,9 +40,9 @@ class TicTacToeGUI:
         self.mapVal.grid(row=3, column=2)
         
         # Create Current Round Val and Label
-        self.currentRoundLabel = tk.Label(self.root, text="Round:")
+        self.currentRoundLabel = tk.Label(self.root, text="Round:", width=15)
         self.currentRoundLabel.grid(row=0, column=3)
-        self.currentRoundVal = tk.Label(self.root, text=self.round)
+        self.currentRoundVal = tk.Label(self.root, text=self.round, width=10)
         self.currentRoundVal.grid(row=0, column=4)
 
         # Create Current Turn Val and Label
