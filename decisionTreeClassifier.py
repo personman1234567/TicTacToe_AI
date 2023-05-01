@@ -21,6 +21,13 @@ accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy:", accuracy)
 
 # Make predictions on new data
-new_board = [[-1, 1, 0, 1, 0, 0, 0, 0, -1]]
-prediction = clf.predict(new_board)
+state = [-1, 1, 0, -1, 0, 0, 0, 0, 1]
+
+stateLabels = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+stateCombined = dict()
+for index, val in enumerate(stateLabels):
+    stateCombined[val] = state[index]
+stateDF = pd.DataFrame(stateCombined, index=[0])
+
+prediction = clf.predict(stateDF)
 print("Prediction:", prediction)

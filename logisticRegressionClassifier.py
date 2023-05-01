@@ -10,10 +10,10 @@ def logisticRegressionClassifier(state, player):
     stateLabels = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
     x = data[stateLabels]
     y = data["class"]
-    stateCombined = dict()
-    for index, val in enumerate(stateLabels):
-        stateCombined[val] = state[index]
-    stateDF = pd.DataFrame(stateCombined, index=[0])
+    # stateCombined = dict()
+    # for index, val in enumerate(stateLabels):
+    #     stateCombined[val] = state[index]
+    # stateDF = pd.DataFrame(stateCombined, index=[0])
 
     # Create Logistic Regression Model
     model = LogisticRegression(random_state=0).fit(x, y)
