@@ -4,6 +4,7 @@ from TicTacToe_MiniMax import *
 from minRiskClassifier import *
 import tkinter.font as tkFont
 from logisticRegressionClassifier import *
+from decisionTreeClassifier import *
 
 class TicTacToeGUI:
     def __init__(self):
@@ -28,7 +29,7 @@ class TicTacToeGUI:
 
         # Create Reset Button
         resetButton = tk.Button(self.root, text="Reset", width=10, height=5, command=lambda: self.resetGame())
-        resetButton.grid(row=3, column=0)
+        resetButton.grid(row=4, column=0)
 
         # Label and Value for board map
         self.mapLabel = tk.Label(self.root, text="Map: ")
@@ -94,9 +95,22 @@ class TicTacToeGUI:
         self.minimaxVal = tk.Label(self.root, text=str(self.colRowToVectorVal(nextMinimaxMove[1], nextMinimaxMove[0])))
         self.minimaxVal.grid(row=3, column=6)
 
+        self.decTreeLabel = tk.Label(self.root, text="Decision Tree\nPredicted Winner:", width=15, height=5, borderwidth=1, relief="ridge")
+        self.decTreeLabel.grid(row=4, column=3)
+        self.decTreeVal = tk.Label(self.root, text=decisionTreeClassifier([0,0,0,0,0,0,0,0,0], 1))
+        self.decTreeVal.grid(row=4, column=4)
+
 
     def setPlayer(self, player):
         self.player = player
+
+    def getPlayerNum(self):
+        if self.player == "X":
+            return 1
+        elif self.player == "O":
+            return -1
+        else:
+            return 0
 
     def clicked(self, row, col):
 
@@ -158,6 +172,9 @@ class TicTacToeGUI:
         nextMinimaxMove = get_best_move_minimax(self.board)
         self.setMinimaxVal(str(self.colRowToVectorVal(nextMinimaxMove[1], nextMinimaxMove[0])))
 
+        decTreePred = decisionTreeClassifier([0,0,0,0,0,0,0,0,0], 1)
+        self.setDecTreeVal(decTreePred)
+
 
     def setTurnLabel(self, content):
         self.currentTurnVal["text"] = content
@@ -188,6 +205,9 @@ class TicTacToeGUI:
 
     def setMinimaxVal(self, content):
         self.minimaxVal["text"] = content
+
+    def setDecTreeVal(self, content):
+        self.decTreeVal["text"] = content
 
     def updateRoundDisplay(self):
         self.setRound(self.round + 1)
@@ -242,6 +262,9 @@ class TicTacToeGUI:
             player = -1
         else:
             player = 0
+
+        decTreePrediction = decisionTreeClassifier(board, player)
+        self.setDecTreeVal(decTreePrediction)
 
         if self.player == "X":
             nextMoveMinRisk = getNextBestMoveMinRisk(board, player)

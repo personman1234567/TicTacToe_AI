@@ -20,8 +20,8 @@ def logisticRegressionClassifier(state, player):
     # Create Logistic Regression Model
     model = LogisticRegression(random_state=0).fit(x, y)
 
-    getModelConfusionMatrix(model, x, y)
-    getClassificationReport(model, x, y)
+    # getModelConfusionMatrix(model, x, y)
+    # getClassificationReport(model, x, y)
 
     # Get Next board states
     nextStates = getNextBoardStates(state, player)
@@ -51,8 +51,8 @@ def getModelConfusionMatrix(model, x, y):
     fig, ax = plt.subplots(figsize=(8, 8))
     ax.imshow(cm)
     ax.grid(False)
-    ax.xaxis.set(ticks=(0, 1), ticklabels=('Predicted 0s', 'Predicted 1s'))
-    ax.yaxis.set(ticks=(0, 1), ticklabels=('Actual 0s', 'Actual 1s'))
+    ax.xaxis.set(ticks=(0, 1), ticklabels=('Predicted Negative', 'Predicted Positive'))
+    ax.yaxis.set(ticks=(0, 1), ticklabels=('Actual Negative', 'Actual Positive'))
     ax.set_ylim(1.5, -0.5)
     for i in range(2):
         for j in range(2):
