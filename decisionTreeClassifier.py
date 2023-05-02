@@ -44,8 +44,8 @@ def decisionTreeClassifier(state, player):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
     # Train the model
-    clf = DecisionTreeClassifier(random_state=0).fit(X_train, y_train)
-    # clf = DecisionTreeClassifier(random_state=0).fit(X, y)
+    # clf = DecisionTreeClassifier(random_state=0).fit(X_train, y_train)
+    clf = DecisionTreeClassifier(random_state=0).fit(X, y)
 
     # Evaluate the model
     # y_pred = clf.predict(X_test)
