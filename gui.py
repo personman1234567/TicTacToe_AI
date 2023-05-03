@@ -70,7 +70,9 @@ class TicTacToeGUI:
         self.classifierHeaderProb.grid(row=0, column=7)
 
 
-        minRiskMoveAndProb = getNextBestMoveMinRisk([0,0,0,0,0,0,0,0,0], 1)
+        # minRiskMoveAndProb = getNextBestMoveMinRisk([0,0,0,0,0,0,0,0,0], 1)
+        minRiskMoveAndProb = minRiskClassifier([0,0,0,0,0,0,0,0,0], 1)
+
         # Label and Value for Minimum Risk Classifier for X
         self.minRiskXClassifierLabel = tk.Label(self.root, text="MinRisk Classifier:", width=25, height=5, borderwidth=1, relief="ridge")
         self.minRiskXClassifierLabel.grid(row=1, column=5)
@@ -171,7 +173,8 @@ class TicTacToeGUI:
                 # self.buttons[i][j]["width"] = 10
                 self.board[i][j] = ' '
 
-        minRiskMoveAndProb = getNextBestMoveMinRisk([0,0,0,0,0,0,0,0,0], 1)
+        # minRiskMoveAndProb = getNextBestMoveMinRisk([0,0,0,0,0,0,0,0,0], 1)
+        minRiskMoveAndProb = minRiskClassifier([0,0,0,0,0,0,0,0,0], 1)
         self.setMinRiskXVal(minRiskMoveAndProb[0])
         self.setMinRiskXProb(round(minRiskMoveAndProb[1], 5))
 
@@ -299,7 +302,8 @@ class TicTacToeGUI:
             decTreePrediction = decisionTreeClassifier(board, player)
             self.setDecTreeVal(decTreePrediction)
 
-            nextMoveMinRisk = getNextBestMoveMinRisk(board, player)
+            # nextMoveMinRisk = getNextBestMoveMinRisk(board, player)
+            nextMoveMinRisk = minRiskClassifier(board, player)
             nextMoveLogReg = logisticRegressionClassifier(board, player)
             nextMoveMinimax = get_best_move_minimax(self.board, self.player)
 
