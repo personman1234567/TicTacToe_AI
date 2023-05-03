@@ -35,10 +35,12 @@ def getModelConfusionMatrix(model, x, y):
     ax.grid(False)
     ax.xaxis.set(ticks=(0, 1), ticklabels=('Predicted Negative', 'Predicted Positive'))
     ax.yaxis.set(ticks=(0, 1), ticklabels=('Actual Negative', 'Actual Positive'))
+    ax.xaxis.label.set_size(20)
+    ax.yaxis.label.set_size(20)
     ax.set_ylim(1.5, -0.5)
     for i in range(2):
         for j in range(2):
-            ax.text(j, i, cm[i, j], ha='center', va='center', color='red')
+            ax.text(j, i, cm[i, j], ha='center', va='center', color='black', fontsize=30)
     plt.show()
 
 def getClassificationReport(model, x, y):

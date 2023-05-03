@@ -30,7 +30,7 @@ def getDecTreeStats():
 
 def getAllStats():
     getMinRiskStats()
-    # getLogRegStats()
-    # getDecTreeStats()
+    getLogRegStats()
+    getDecTreeStats()
 
 getAllStats()
