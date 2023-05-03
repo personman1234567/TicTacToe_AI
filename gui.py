@@ -24,7 +24,8 @@ class TicTacToeGUI:
         # Create tic tac toe board
         for i in range(3):
             for j in range(3):
-                button = tk.Button(self.root, text="", width=10, height=5, command=lambda row=i, col=j: self.clicked(row, col))
+                num = ((i*3) + j) + 1
+                button = tk.Button(self.root, text=str(num) + "                   \n\n\n\n", font=("Arial", 10), width=10, height=5, command=lambda row=i, col=j: self.clicked(row, col))
                 button.grid(row=i, column=j)
                 self.buttons[i][j] = button
 
@@ -120,9 +121,14 @@ class TicTacToeGUI:
         
         button = self.buttons[row][col]
 
-        if button["text"] == "":
+        # if button["text"] == "":
+        if self.board[row][col] == ' ':
             self.board[row][col] = self.player
             button["text"] = self.player
+            # button["font"] = ("Arial", 10)
+            # button["height"] = 1
+            # button["width"] = 4
+            # button["pady"] = 5
 
             winner = self.has_winner()
             if winner != None:
@@ -158,7 +164,11 @@ class TicTacToeGUI:
 
         for i in range(3):
             for j in range(3):
-                self.buttons[i][j]["text"] = ""
+                num = ((i*3) + j) + 1
+                self.buttons[i][j]["text"] = str(num) + "                   \n\n\n\n"
+                # self.buttons[i][j]["font"] = ("Arial", 10)
+                # self.buttons[i][j]["height"] = 5
+                # self.buttons[i][j]["width"] = 10
                 self.board[i][j] = ' '
 
         minRiskMoveAndProb = getNextBestMoveMinRisk([0,0,0,0,0,0,0,0,0], 1)
