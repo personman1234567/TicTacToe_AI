@@ -17,6 +17,7 @@ class TicTacToeGUI:
             [' ', ' ', ' ']
         ]
         self.round = 1
+        self.predictionsDisplayed = True
 
         self.buttons = [[" " for _ in range(3)] for _ in range(3)]
 
@@ -28,8 +29,8 @@ class TicTacToeGUI:
                 self.buttons[i][j] = button
 
         # Create Reset Button
-        resetButton = tk.Button(self.root, text="Reset", width=10, height=5, command=lambda: self.resetGame())
-        resetButton.grid(row=4, column=0)
+        self.resetButton = tk.Button(self.root, text="Reset", width=10, height=5, command=lambda: self.resetGame())
+        self.resetButton.grid(row=4, column=0)
 
         # Label and Value for board map
         self.mapLabel = tk.Label(self.root, text="Map: ")
@@ -64,7 +65,7 @@ class TicTacToeGUI:
         self.classifierHeaderLabel.grid(row=0, column=5)
         self.classifierHeaderVal = tk.Label(self.root, text="X", width=10, height=5, borderwidth=1, relief="ridge")
         self.classifierHeaderVal.grid(row=0, column=6)
-        self.classifierHeaderProb = tk.Label(self.root, text="Probability of Positive", width=20, height=5, borderwidth=1, relief="ridge")
+        self.classifierHeaderProb = tk.Label(self.root, text="Probability", width=20, height=5, borderwidth=1, relief="ridge")
         self.classifierHeaderProb.grid(row=0, column=7)
 
 
@@ -88,7 +89,7 @@ class TicTacToeGUI:
         self.logRegXClassifierProb.grid(row=2, column=7)
 
 
-        nextMinimaxMove = get_best_move_minimax(self.board)
+        nextMinimaxMove = get_best_move_minimax(self.board, self.player)
         # Label and Value for Minimax Recommendation
         self.minimaxLabel = tk.Label(self.root, text="Minimax Classifier:", width=25, height=5, borderwidth=1, relief="ridge")
         self.minimaxLabel.grid(row=3, column=5)
@@ -99,6 +100,9 @@ class TicTacToeGUI:
         self.decTreeLabel.grid(row=4, column=3)
         self.decTreeVal = tk.Label(self.root, text=decisionTreeClassifier([0,0,0,0,0,0,0,0,0], 1))
         self.decTreeVal.grid(row=4, column=4)
+
+        self.displayPredictions = tk.Button(self.root, text="Hide\nPredictions", width=10, height=5, command=lambda: self.showHidePredictions())
+        self.displayPredictions.grid(row=4, column=7)
 
 
     def setPlayer(self, player):
@@ -113,40 +117,35 @@ class TicTacToeGUI:
             return 0
 
     def clicked(self, row, col):
-
+        
         button = self.buttons[row][col]
 
-        if self.board[row][col] != " ":
-            self.player = " "
+        if button["text"] == "":
+            self.board[row][col] = self.player
+            button["text"] = self.player
 
-        self.board[row][col] = self.player
+            winner = self.has_winner()
+            if winner != None:
+                self.updateWinnerDisplay(winner)
+                # self.setTurnLabel("Winner: " + winner)
+            else: 
+                if self.player == "X":
+                    self.setTurnLabel("O")
+                    self.setPlayer("O")
+                elif self.player == "O":
+                    self.setTurnLabel("X")
+                    self.setPlayer("X")
+                
+                self.updateRoundDisplay()
 
-        if self.player == "X":
-            button["text"] = "X"
-            self.setTurnLabel("O")
-            self.setPlayer("O")
-            self.updateRoundDisplay()
-        elif self.player == "O":
-            button["text"] = "O"
-            self.setTurnLabel("X")
-            self.setPlayer("X")
-            self.updateRoundDisplay()
-        else:
-            button["text"] = ""
-            self.setPlayer(" ")
+                # Check if the board is full
+                empty = self.has_empty()
+                if empty == False:
+                    self.setStatusLabel("Draw!")
+                    self.setStatusVal("")
+                else:
+                    self.updateRecs()
 
-        self.updateRecs()
-
-        winner = self.has_winner()
-        if winner != None:
-            self.updateWinnerDisplay(winner)
-            # self.setTurnLabel("Winner: " + winner)
-
-        # Check if the board is full
-        empty = self.has_empty()
-        if empty == False:
-            self.setStatusLabel("Draw!")
-            self.setStatusVal("")
 
     def resetGame(self):
         self.setRound(1)
@@ -155,6 +154,7 @@ class TicTacToeGUI:
         self.setTurnLabel(self.player)
         self.setStatusLabel("Status:")
         self.setStatusVal("Ongoing")
+        self.setHeaderVal("X")
 
         for i in range(3):
             for j in range(3):
@@ -169,12 +169,27 @@ class TicTacToeGUI:
         self.setLogRegXVal(logisticRegressionMoveAndProb[0])
         self.setLogRegXProb(round(logisticRegressionMoveAndProb[1], 5))
 
-        nextMinimaxMove = get_best_move_minimax(self.board)
+        nextMinimaxMove = get_best_move_minimax(self.board, self.player)
         self.setMinimaxVal(str(self.colRowToVectorVal(nextMinimaxMove[1], nextMinimaxMove[0])))
 
         decTreePred = decisionTreeClassifier([0,0,0,0,0,0,0,0,0], 1)
         self.setDecTreeVal(decTreePred)
 
+    def showHidePredictions(self):
+        # Hide all prediction stuff
+        if self.predictionsDisplayed == True:
+            self.predictionsDisplayed = False
+            self.setMinRiskXVal("-")
+            self.setLogRegXVal("-")
+            self.setMinimaxVal("-")
+            self.setMinRiskXProb("-")
+            self.setLogRegXProb("-")
+            self.setDecTreeVal("-")
+            self.setDisplayPred("Display\nPredictions")
+        else:
+            self.setDisplayPred("Hide\nPredictions")
+            self.predictionsDisplayed = True
+            self.updateRecs()
 
     def setTurnLabel(self, content):
         self.currentTurnVal["text"] = content
@@ -209,9 +224,16 @@ class TicTacToeGUI:
     def setDecTreeVal(self, content):
         self.decTreeVal["text"] = content
 
+    def setHeaderVal(self, content):
+        self.classifierHeaderVal["text"] = content
+    
+    def setDisplayPred(self, content):
+        self.displayPredictions["text"] = content
+
     def updateRoundDisplay(self):
         self.setRound(self.round + 1)
         self.setRoundVal(self.round)
+        self.setHeaderVal(self.player)
 
     def updateWinnerDisplay(self, winner):
         self.setStatusLabel("Winner: ")
@@ -255,21 +277,21 @@ class TicTacToeGUI:
         return transformedBoard
     
     def updateRecs(self):
-        board = self.transformBoard()
-        if self.player == "X":
-            player = 1
-        elif self.player == "O":
-            player = -1
-        else:
-            player = 0
+        if self.predictionsDisplayed == True and self.has_empty() == True:
+            board = self.transformBoard()
+            if self.player == "X":
+                player = 1
+            elif self.player == "O":
+                player = -1
+            else:
+                player = 0
 
-        decTreePrediction = decisionTreeClassifier(board, player)
-        self.setDecTreeVal(decTreePrediction)
+            decTreePrediction = decisionTreeClassifier(board, player)
+            self.setDecTreeVal(decTreePrediction)
 
-        if self.player == "X":
             nextMoveMinRisk = getNextBestMoveMinRisk(board, player)
             nextMoveLogReg = logisticRegressionClassifier(board, player)
-            nextMoveMinimax = get_best_move_minimax(self.board)
+            nextMoveMinimax = get_best_move_minimax(self.board, self.player)
 
             self.setMinRiskXVal(str(nextMoveMinRisk[0]))
             self.setMinRiskXProb(str(round(nextMoveMinRisk[1], 5)))

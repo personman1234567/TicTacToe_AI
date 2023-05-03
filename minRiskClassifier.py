@@ -78,8 +78,12 @@ def getNextBestMoveMinRisk(state, player):
     highestProbability = (0,0)
     for key, value in nextStates.items():
         probabilities = minRiskClassifier(value)
-        if probabilities['positive'] > highestProbability[1]:
-            highestProbability = (key, probabilities['positive'])
+        if player == 1:
+            if probabilities['positive'] > highestProbability[1]:
+                highestProbability = (key, probabilities['positive'])
+        else:
+            if probabilities['negative'] > highestProbability[1]:
+                highestProbability = (key, probabilities['negative'])
 
     return highestProbability
 
