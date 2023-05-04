@@ -39,26 +39,31 @@ def has_winner(board):
     # If no winner yet, then main loop continues
     return None
 
-def evaluate(board):
+def evaluate(board, player, otherPlayer):
     winner = has_winner(board)
-    if winner == 'X':
+    if winner == player:
         return 1
-    elif winner == 'O':
+    elif winner == otherPlayer:
         return -1
     else:
         return 0
 
-def minimax(board, depth, is_maximizing):
-    if has_winner(board):
-        return evaluate(board)
+def minimax(board, depth, is_maximizing, player):
+    if player == 'X':
+        otherPlayer = 'O'
+    else:
+        otherPlayer = 'X'
 
+    if has_winner(board):
+        return evaluate(board, player, otherPlayer)
+    
     if is_maximizing:
         best_score = -float('inf')
         for i in range(3):
             for j in range(3):
                 if board[i][j] == ' ':
-                    board[i][j] = 'X'
-                    score = minimax(board, depth + 1, False)    #Calls recursivly
+                    board[i][j] = player
+                    score = minimax(board, depth + 1, False, player)    #Calls recursivly
                     board[i][j] = ' '
                     best_score = max(best_score, score)
         return best_score
@@ -67,20 +72,20 @@ def minimax(board, depth, is_maximizing):
         for i in range(3):
             for j in range(3):
                 if board[i][j] == ' ':
-                    board[i][j] = 'O'
-                    score = minimax(board, depth + 1, True)     #Calls recursivly
+                    board[i][j] = otherPlayer
+                    score = minimax(board, depth + 1, True, player)     #Calls recursivly
                     board[i][j] = ' '
                     best_score = min(best_score, score)
         return best_score
 
-def get_best_move(board):
+def get_best_move_minimax(board, player):
     best_score = -float('inf')
     best_move = None
     for i in range(3):
         for j in range(3):
             if board[i][j] == ' ':
-                board[i][j] = 'X'
-                score = minimax(board, 0, False)    #Use minimax function to determine best move
+                board[i][j] = player
+                score = minimax(board, 0, False, player)    #Use minimax function to determine best move
                 board[i][j] = ' '
                 if score > best_score:
                     best_score = score
@@ -111,7 +116,7 @@ def main():
             print("\nPlayer X's Turn")
 
         if player == 'X':               #If its x players turn, find best move first, then display best move. Then take the inputs
-            x, y = get_best_move(board)
+            x, y = get_best_move_minimax(board)
             print("The most optimal move for X is: (Column:{}, Row:{})".format(y+1, x+1))
 
         columnInput = False
@@ -149,4 +154,4 @@ def main():
             print("\nIt's a Draw!\n")
             loop = False
 
-main()
+# main()
