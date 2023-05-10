@@ -20,7 +20,6 @@ def decisionTreeClassifier(state, player):
         stateCombined[val] = state[index]
     stateDF = pd.DataFrame(stateCombined, index=[0])
     prediction = clf.predict(stateDF)
-    # print(prediction)
     if prediction[0] == 'positive':
         return 'X'
 

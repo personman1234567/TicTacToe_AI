@@ -30,11 +30,11 @@ def logisticRegressionClassifier(state, player):
         probabilities = model.predict_proba(stateDF)
 
         if player == 1:
-            if probabilities[0][0] > highestProbability[1]:
-                highestProbability = (key, probabilities[0][0])
-        else:
             if probabilities[0][1] > highestProbability[1]:
                 highestProbability = (key, probabilities[0][1])
+        else:
+            if probabilities[0][0] > highestProbability[1]:
+                highestProbability = (key, probabilities[0][0])
 
     return highestProbability
 

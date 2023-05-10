@@ -24,7 +24,7 @@ def minRiskClassifier(state, player):
     nextStates = getNextBoardStates(state, player)
 
     stateLabels = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    highestProbability = (0,0)
+    lowestProbability = (0,1)
     for key, value in nextStates.items():
         # Format new board state
         stateCombined = dict()
@@ -36,13 +36,13 @@ def minRiskClassifier(state, player):
         probabilities = gnb.predict_proba(stateDF)
 
         if player == 1:
-            if probabilities[0][0] > highestProbability[1]:
-                highestProbability = (key, probabilities[0][0])
+            if probabilities[0][0] < lowestProbability[1]:
+                lowestProbability = (key, probabilities[0][0])
         else:
-            if probabilities[0][1] > highestProbability[1]:
-                highestProbability = (key, probabilities[0][1])
+            if probabilities[0][1] < lowestProbability[1]:
+                lowestProbability = (key, probabilities[0][1])
 
-    return highestProbability
+    return lowestProbability
 
 
 
