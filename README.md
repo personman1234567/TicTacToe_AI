@@ -1,5 +1,5 @@
 # MachineLearningProject
-## Ryan Christopher and Ethan Duke
+### Ryan Christopher and Ethan Duke
 Final Project for CS 7720 - Machine Learning
 
 ### Install Require Packages
