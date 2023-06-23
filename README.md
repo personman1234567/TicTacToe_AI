@@ -1,6 +1,6 @@
 # MachineLearningProject
 ### Ryan Christopher and Ethan Duke
-Final Project for CS 7720 - Machine Learning
+Final Project for CS 4720/7720 - Machine Learning
 
 ### Install Require Packages
 - sklearn.naive_bayes
